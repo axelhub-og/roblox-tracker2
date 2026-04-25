@@ -1,48 +1,66 @@
 import requests
 import os
+from datetime import datetime
 
 # --- ตั้งค่า Webhook ของคุณตรงนี้ ---
 WEBHOOK_URL = "https://discord.com/api/webhooks/1497704650743222385/c5dBNfiIVZZRe-XxFOcyMjAaUEImmx-vL1ogMj1-Pyt8Ldb_eYC9y0nMtap9TcNZnZ91"
 HEADERS = {"User-Agent": "WEAO-3PService"}
 
-def check_version(name, api_url, history_file, color, title_prefix):
-    """ฟังก์ชันหลักสำหรับเช็คเวอร์ชัน"""
+def get_unix_timestamp(date_str):
+    """แปลงวันที่จาก API เป็น Unix Timestamp สำหรับ Discord"""
+    try:
+        # รูปแบบจาก API: 4/22/2026, 7:33:09 PM UTC
+        clean_date = date_str.replace(" UTC", "")
+        dt = datetime.strptime(clean_date, "%m/%d/%Y, %I:%M:%S %p")
+        # แปลงเป็นวินาที (Unix Timestamp)
+        return int(dt.timestamp())
+    except Exception as e:
+        print(f"Error parsing date: {e}")
+        return None
+
+def check_version(name, api_url, history_file, color):
     try:
         response = requests.get(api_url, headers=HEADERS)
         if response.status_code != 200:
-            print(f"[{name}] API Error: {response.status_code}")
             return
 
         data = response.json()
         current_hash = data.get("Windows", "")
-        update_date = data.get("WindowsDate", "N/A")
+        raw_date = data.get("WindowsDate", "N/A")
+        
+        # แปลงเป็นเลข Timestamp
+        timestamp = get_unix_timestamp(raw_date)
 
-        # อ่านประวัติเก่า
+        # อ่านประวัติเก่าเพื่อเช็คอัปเดต
         last_hash = ""
         if os.path.exists(history_file):
             with open(history_file, "r") as f:
                 last_hash = f.read().strip()
 
-        # ถ้ามีการอัปเดต
         if current_hash and current_hash != last_hash:
-            print(f"[{name}] New version detected!")
-            
+            # สร้างข้อความเวลาแบบ Discord Dynamic Timestamp
+            # <t:12345678:F> = วันและเวลาเต็ม
+            # <t:12345678:R> = (กี่นาทีที่แล้ว)
+            discord_time = f"<t:{timestamp}:F> (<t:{timestamp}:R>)" if timestamp else raw_date
+
             payload = {
-                "content": "@everyone" if name == "LIVE" else "", # @everyone เฉพาะตัว Live
+                "content": "@everyone" if name == "LIVE" else "",
                 "embeds": [{
-                    "title": f"🚀 {title_prefix} Update Detected!",
+                    "title": "Roblox Update Detected!",
+                    "description": f"This is a **{name.lower()}** update, Cosmic is **patched**.",
                     "color": color,
                     "fields": [
-                        {"name": "Version-Hash", "value": f"`{current_hash}`", "inline": False},
-                        {"name": "Update Date", "value": f"`{update_date}`", "inline": True},
-                        {"name": "Channel", "value": f"`{name}`", "inline": True}
+                        {"name": "Platform", "value": "Windows", "inline": False},
+                        {"name": "Version Hash", "value": f"`{current_hash}`", "inline": False},
+                        {"name": "Date", "value": discord_time, "inline": False}
                     ],
                     "footer": {"text": "Axel Hub Auto-Tracker"}
                 }]
             }
             
             requests.post(WEBHOOK_URL, json=payload)
-            # บันทึกประวัติใหม่
+            
+            # บันทึกประวัติ
             with open(history_file, "w") as f:
                 f.write(current_hash)
         else:
@@ -52,8 +70,6 @@ def check_version(name, api_url, history_file, color, title_prefix):
         print(f"[{name}] Error: {e}")
 
 if __name__ == "__main__":
-    # 1. เช็คตัว Live (ปัจจุบัน)
-    check_version("LIVE", "https://weao.xyz/api/versions/current", "last_hash.txt", 2829617, "Roblox Windows")
-    
-    # 2. เช็คตัว Future (อนาคต)
-    check_version("FUTURE", "https://weao.xyz/api/versions/future", "last_future_hash.txt", 16766720, "Upcoming Windows")
+    # เช็คทั้ง Live และ Future
+    check_version("LIVE", "https://weao.xyz/api/versions/current", "last_hash.txt", 10181046)
+    check_version("FUTURE", "https://weao.xyz/api/versions/future", "last_future_hash.txt", 15277667)
