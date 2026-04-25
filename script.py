@@ -52,8 +52,8 @@ def check_version(name, api_url, history_file, color):
             payload = {
                 "content": "@everyone" if name == "LIVE" else "",
                 "embeds": [{
-                    "title": "Roblox Update Detected!",
-                    "description": f"This is a **{name.lower()}** update, Cosmic is **patched**.",
+                    "title": "🚀 Roblox Update Detected!",
+                    "description": f"This is a **{name.lower()}** update, Executor is **patched**.",
                     "color": color,
                     "fields": [
                         {"name": "Platform", "value": "Windows", "inline": False},
