@@ -1,7 +1,7 @@
 name: Roblox Tracker Bot
 on:
   schedule:
-    - cron: '*/30 * * * *' # รันทุก 30 นาที
+    - cron: '*/5 * * * *' # รันทุก 30 นาที
   workflow_dispatch: # ปุ่มกดรันเอง
 
 jobs:
