@@ -1,18 +1,24 @@
 import requests
 import os
-from datetime import datetime
+import time
+from datetime import datetime, timezone # เพิ่ม timezone เข้ามา
 
 # --- ตั้งค่า Webhook ของคุณตรงนี้ ---
 WEBHOOK_URL = "https://discord.com/api/webhooks/1497704650743222385/c5dBNfiIVZZRe-XxFOcyMjAaUEImmx-vL1ogMj1-Pyt8Ldb_eYC9y0nMtap9TcNZnZ91"
 HEADERS = {"User-Agent": "WEAO-3PService"}
 
 def get_unix_timestamp(date_str):
-    """แปลงวันที่จาก API เป็น Unix Timestamp สำหรับ Discord"""
+    """แปลงวันที่จาก API เป็น Unix Timestamp โดยระบุว่าเป็นเวลา UTC"""
     try:
-        # รูปแบบจาก API: 4/22/2026, 7:33:09 PM UTC
+        # ตัดคำว่า UTC ออกเพื่อให้ Python อ่านง่ายขึ้น
         clean_date = date_str.replace(" UTC", "")
+        # อ่านข้อความวันเวลา
         dt = datetime.strptime(clean_date, "%m/%d/%Y, %I:%M:%S %p")
-        # แปลงเป็นวินาที (Unix Timestamp)
+        
+        # *** สำคัญมาก: ต้องบอก Python ว่าเลขนี้คือเวลามาตรฐาน (UTC) นะ ***
+        dt = dt.replace(tzinfo=timezone.utc)
+        
+        # แปลงเป็นเลข Unix (เลขชุดนี้ Discord จะเอาไปคำนวณเป็นเวลาเครื่องคนดูให้เอง)
         return int(dt.timestamp())
     except Exception as e:
         print(f"Error parsing date: {e}")
