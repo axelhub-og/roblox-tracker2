@@ -1,7 +1,7 @@
 name: Roblox Tracker Bot
 on:
   schedule:
-    - cron: '*/5 * * * *' # รันทุก 30 นาที
+    - cron: '*/5 * * * *' # รันทุก 5 นาที (เสถียรกว่า 1 นาทีบน GitHub แพลนฟรี)
   workflow_dispatch: # ปุ่มกดรันเอง
 
 jobs:
@@ -28,6 +28,8 @@ jobs:
         run: |
           git config --global user.name 'AxelTrackerBot'
           git config --global user.email 'bot@axelhub.og'
+          # ตรวจสอบว่าไฟล์ประวัติมีอยู่จริงก่อนทำการ git add
+          touch last_hash.txt last_future_hash.txt
           git add last_hash.txt last_future_hash.txt
           git commit -m "update: sync version history [skip ci]" || exit 0
           git push
