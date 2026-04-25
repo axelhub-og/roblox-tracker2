@@ -28,8 +28,13 @@ jobs:
         run: |
           git config --global user.name 'AxelTrackerBot'
           git config --global user.email 'bot@axelhub.og'
-          # ตรวจสอบว่าไฟล์ประวัติมีอยู่จริงก่อนทำการ git add
           touch last_hash.txt last_future_hash.txt
           git add last_hash.txt last_future_hash.txt
-          git commit -m "update: sync version history [skip ci]" || exit 0
-          git push
+          # ตรวจสอบก่อน commit ว่ามีอะไรเปลี่ยนไหม
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "update: sync history [skip ci]"
+            git pull --rebase origin main # ดึงข้อมูลล่าสุดมาก่อนกัน Error
+            git push origin main
+          fi
