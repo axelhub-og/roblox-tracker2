@@ -45,7 +45,7 @@ def check_version(name, api_url, history_file, color):
             if name == "LIVE":
                 tag_content = "@everyone ⚠️ **Roblox Current Version Updated!**"
             else:
-                tag_content = "📢 **Future Update Detected (Early Warning)**"
+                tag_content = "📢 **Future Update Detected (Warning)**"
 
             # เวลาแบบ Discord Dynamic (เช่น วันนี้ เวลา... หรือ 2 นาทีที่แล้ว)
             discord_time = f"<t:{timestamp}:F> (<t:{timestamp}:R>)" if timestamp else f"`{raw_date}`"
