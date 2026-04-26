@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timezone
 
 # --- ตั้งค่า Webhook ของคุณตรงนี้ ---
-WEBHOOK_URL = "https://discord.com/api/webhooks/1497704650743222385/c5dBNfiIVZZRe-XxFOcyMjAaUEImmx-vL1ogMj1-Pyt8Ldb_eYC9y0nMtap9TcNZnZ91"
+WEBHOOK_URL = "https://discord.com/api/webhooks/1498093446991315148/fqAiAs8noMzYDq6OP7S2zPAsKp-mBOpNS0r80ze5uQ7Qy3927QJ08MG7PXyv7GuyQvvM"
 HEADERS = {"User-Agent": "Axel-Tracker-v2-Independent"}
 
 def get_unix_timestamp(date_str):
