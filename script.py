@@ -62,7 +62,7 @@ def check_version(name, api_url, history_file, color):
                         {"name": "Version Hash", "value": f"`{current_hash}`", "inline": False},
                         {"name": "Update Date", "value": discord_time, "inline": False}
                     ],
-                    "footer": {"text": "Axel Hub Auto-Tracker • Syncing..."}
+                    "footer": {"text": "Axel Hub Auto Tracker"}
                 }]
             }
             
