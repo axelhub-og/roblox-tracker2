@@ -1,8 +1,8 @@
 name: Roblox Tracker Bot
 on:
   schedule:
-    - cron: '*/5 * * * *' # รันทุก 5 นาที
-  workflow_dispatch: # ปุ่มกดรันเอง
+    - cron: '*/5 * * * *' # ตั้งค่ารันทุก 5 นาที (GitHub แพลนฟรีจะรันจริงทุก 15-30 นาที)
+  workflow_dispatch: # สำหรับกดรันด้วยตนเองเพื่อทดสอบ
 
 jobs:
   run-bot:
@@ -11,12 +11,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # อัปเดตเป็น v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # อัปเดตเป็น v5
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -24,7 +22,14 @@ jobs:
         run: pip install requests
 
       - name: Execute Tracker
-        run: python script.py
+        run: |
+          # รันไฟล์ script.py ตัวพิมพ์เล็กตามที่ระบุ
+          if [ -f "script.py" ]; then
+            python script.py
+          else
+            echo "Error: script.py not found!"
+            exit 1
+          fi
 
       - name: Sync History
         run: |
@@ -33,7 +38,7 @@ jobs:
           touch last_hash.txt last_future_hash.txt
           git add last_hash.txt last_future_hash.txt
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No changes in version history."
           else
             git commit -m "update: sync version history [skip ci]"
             git pull --rebase origin main
