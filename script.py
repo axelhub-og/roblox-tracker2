@@ -43,7 +43,7 @@ def check_version(name, api_url, history_file, color):
             # ระบบ Tag: @everyone เฉพาะ LIVE เท่านั้น
             tag_content = ""
             if name == "LIVE":
-                tag_content = "@Updated-roblox ⚠️ **Roblox Current Version Updated!**"
+                tag_content = "⚠️ **Roblox Current Version Updated!**"
             else:
                 tag_content = "📢 **Future Update Detected (Warning)**"
 
